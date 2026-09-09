@@ -31,15 +31,25 @@ No core patches, no background daemons, no extra storage: everything is standard
 
 ## Screenshots
 
-| New Agent 
+### LCARS Bot Mode shell
+
+Opaque LCARS tabs, left-side bot roster pills, and the docked Cronjobs pane:
+
+![LCARS Bot Mode shell](assets/lcars-bot-mode-full.png)
+
+Focused crop of the Sessions / Bots / Cronjobs tab chrome:
+
+![LCARS tab chrome](assets/lcars-bot-mode-tabs.png)
+
+### New Agent
 
 <img width="745" height="999" alt="image" src="https://github.com/user-attachments/assets/a1fc78bf-d8f8-4591-87c9-3f9ef06ac365" />
 
-| PetDex avatars 
+### PetDex avatars
 
 <img width="955" height="783" alt="image" src="https://github.com/user-attachments/assets/2a686fd2-45c5-44c0-86b5-7e2a4f7acd49" />
 
-| Agent 2 Agent Communications
+### Agent 2 Agent Communications
 
 <img width="1313" height="612" alt="image" src="https://github.com/user-attachments/assets/c45b1e96-4362-4462-a049-ba8c44b87bed" />
 

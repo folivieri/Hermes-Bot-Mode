@@ -359,7 +359,51 @@ if (typeof document !== 'undefined' && !document.getElementById('hermes-bots-ros
   style.id = 'hermes-bots-roster-css'
   style.textContent =
     '.hermes-bots-roster [data-radix-scroll-area-viewport] > div {' +
-    ' display: block !important; width: 100%; min-width: 0; }'
+    ' display: block !important; width: 100%; min-width: 0; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-row {' +
+    ' border-radius: 1.25rem; border: 1px solid rgba(245, 177, 52, 0.16);' +
+    ' background: linear-gradient(90deg, rgba(18,31,52,0.96) 0%, rgba(10,18,32,0.92) 100%);' +
+    ' box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.2);' +
+    ' padding: 0.55rem 0.65rem 0.55rem 0.5rem; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-row:hover {' +
+    ' background: linear-gradient(90deg, rgba(26,44,73,0.98) 0%, rgba(13,22,38,0.95) 100%);' +
+    ' border-color: rgba(245, 177, 52, 0.28); }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-row.is-active {' +
+    ' background: linear-gradient(90deg, rgba(40,66,106,0.98) 0%, rgba(16,27,46,0.96) 100%);' +
+    ' border-color: rgba(245, 177, 52, 0.38);' +
+    ' box-shadow: inset 0 0 0 1px rgba(86, 168, 255, 0.2), 0 10px 24px rgba(0,0,0,0.24); }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-avatar-pill {' +
+    ' display: flex; align-items: center; justify-content: center; width: 2.65rem; height: 2.65rem;' +
+    ' flex: 0 0 2.65rem; border-radius: 999px;' +
+    ' background: linear-gradient(135deg, rgba(8,16,29,0.94), rgba(23,40,67,0.9));' +
+    ' border: 1px solid color-mix(in srgb, var(--bot-accent, #58a6ff) 78%, white 22%);' +
+    ' box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 0 0 0.22rem color-mix(in srgb, var(--bot-accent, #58a6ff) 18%, transparent); }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-identity {' +
+    ' display: flex; min-width: 0; align-items: center; gap: 0.38rem; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-name {' +
+    ' min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' +
+    ' color: rgba(240, 246, 255, 0.98); font-size: 0.84rem; font-weight: 700; letter-spacing: 0.01em; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-handle {' +
+    ' flex: 0 0 auto; color: rgba(111, 177, 255, 0.78); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-pill-lane {' +
+    ' display: flex; min-width: 0; flex: 0 0 auto; align-items: center; gap: 0.4rem; margin-left: auto; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-role-pill,' +
+    ' :root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-time-pill {' +
+    ' display: inline-flex; min-width: 0; align-items: center; justify-content: center;' +
+    ' border-radius: 999px; padding: 0.16rem 0.58rem; font-size: 0.62rem; line-height: 1; white-space: nowrap; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-role-pill {' +
+    ' max-width: 10.25rem; overflow: hidden; text-overflow: ellipsis;' +
+    ' background: color-mix(in srgb, var(--bot-accent, #58a6ff) 22%, rgba(9,16,28,0.94));' +
+    ' border: 1px solid color-mix(in srgb, var(--bot-accent, #58a6ff) 62%, white 18%);' +
+    ' color: color-mix(in srgb, var(--bot-accent, #58a6ff) 34%, white 66%);' +
+    ' text-transform: uppercase; letter-spacing: 0.08em; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-time-pill {' +
+    ' border: 1px solid rgba(245, 177, 52, 0.42); background: rgba(11, 19, 33, 0.92);' +
+    ' color: rgba(245, 177, 52, 0.96); font-variant-numeric: tabular-nums; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-preview {' +
+    ' color: rgba(156, 188, 228, 0.78); padding-top: 0.1rem; }' +
+    ':root[data-hermes-shell-variant="lcars"] .hermes-bots-roster .hermes-bot-unread-dot {' +
+    ' background: rgba(111, 177, 255, 0.98); box-shadow: 0 0 0 0.14rem rgba(111, 177, 255, 0.16); }'
   document.head.appendChild(style)
 }
 
@@ -1317,6 +1361,52 @@ function displayName(bot, meta) {
   return raw.replace(/\b\w/g, ch => ch.toUpperCase())
 }
 
+function prettyBotName(name) {
+  const raw = botHandle(name)
+  return raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase())
+}
+
+function isLikelyIdentityName(value) {
+  const text = (value || '').trim()
+  if (!text || text.length > 18) {
+    return false
+  }
+  const words = text.split(/\s+/).filter(Boolean)
+  if (words.length > 2) {
+    return false
+  }
+  return !/(chief|principal|engineer|writer|reviewer|architect|officer|manager|director|lead)/i.test(text)
+}
+
+function descriptionTitle(description) {
+  const raw = (description || '').split('\n').map(line => line.trim()).find(Boolean) || ''
+  if (!raw) {
+    return ''
+  }
+  const first = raw.split(/\s+[—–-]\s+|\.(?:\s|$)/)[0].trim()
+  return first.replace(/^['"]+|['"]+$/g, '')
+}
+
+function botIdentityName(bot, meta) {
+  if (isLikelyIdentityName(meta?.title)) {
+    return meta.title.trim()
+  }
+  return prettyBotName(bot.name)
+}
+
+function botIdentityTitle(bot, meta) {
+  const name = botIdentityName(bot, meta)
+  const candidates = [meta?.title, bot.title, descriptionTitle(bot.description)]
+  for (const candidate of candidates) {
+    const text = (candidate || '').trim()
+    if (text && text.toLowerCase() !== name.toLowerCase()) {
+      return text
+    }
+  }
+  const handle = `@${botHandle(bot.name)}`
+  return handle.toLowerCase() === name.toLowerCase() ? '' : handle
+}
+
 function slugify(value) {
   return value
     .toLowerCase()
@@ -1401,6 +1491,8 @@ function BotRow({ bot, onEdit }) {
   const last = bot.last_session
   const isActive = bot.name === activeProfile
   const { shape, color, image } = botAppearance(bot.name, meta)
+  const identityName = botIdentityName(bot, meta)
+  const identityTitle = botIdentityTitle(bot, meta)
   // Reactive eyes: scan while this bot's backend is running a turn in the
   // active window; calm otherwise. gatewayState is app-wide, so scope to the
   // active profile's row only.
@@ -1459,14 +1551,15 @@ function BotRow({ bot, onEdit }) {
   const row = jsxs('button', {
     type: 'button',
     onClick: open,
+    style: { '--bot-accent': color },
     className: cn(
-      'flex w-full min-w-0 max-w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-2 text-left transition-colors',
+      'hermes-bot-row flex w-full min-w-0 max-w-full items-center gap-2.5 overflow-hidden rounded-md px-2 py-2 text-left transition-colors',
       'hover:bg-(--chrome-action-hover)',
-      isActive && 'bg-(--chrome-action-hover)'
+      isActive && 'bg-(--chrome-action-hover) is-active'
     ),
     children: [
       jsx('div', {
-        className: 'shrink-0',
+        className: 'hermes-bot-avatar-pill shrink-0',
         children: jsx(BotFace, { shape, color, image, size: 34, name: bot.name, mood: botMood })
       }),
       jsxs('div', {
@@ -1476,36 +1569,47 @@ function BotRow({ bot, onEdit }) {
             className: 'flex items-baseline justify-between gap-2',
             children: [
               jsxs('div', {
-                className: 'flex min-w-0 items-baseline gap-1.5 truncate',
+                className: 'hermes-bot-identity flex min-w-0 items-baseline gap-1.5 truncate',
                 children: [
                   jsx('span', {
-                    className: 'truncate text-[0.8125rem] font-medium',
-                    children: displayName(bot, meta)
+                    className: 'hermes-bot-name truncate text-[0.8125rem] font-medium',
+                    children: identityName
                   }),
                   showsHandle(bot.name, meta)
                     ? jsx('span', {
-                        className: 'shrink-0 font-mono text-[0.6875rem] text-(--ui-text-quaternary)',
+                        className: 'hermes-bot-handle shrink-0 font-mono text-[0.6875rem] text-(--ui-text-quaternary)',
                         children: `@${botHandle(bot.name)}`
                       })
                     : null
                 ]
               }),
-              unread
-                ? jsx('span', {
-                    className: 'size-2 shrink-0 rounded-full bg-(--ui-accent,#4f9cf9)',
-                    'aria-label': 'unread'
-                  })
-                : null,
-              last
-                ? jsx('span', {
-                    className: 'shrink-0 text-[0.6875rem] text-(--ui-text-quaternary)',
-                    children: relativeTime(last.last_active * 1000)
-                  })
-                : null
+              jsxs('div', {
+                className: 'hermes-bot-pill-lane',
+                children: [
+                  unread
+                    ? jsx('span', {
+                        className: 'hermes-bot-unread-dot size-2 shrink-0 rounded-full bg-(--ui-accent,#4f9cf9)',
+                        'aria-label': 'unread'
+                      })
+                    : null,
+                  identityTitle
+                    ? jsx('span', {
+                        className: 'hermes-bot-role-pill',
+                        children: identityTitle
+                      })
+                    : null,
+                  last
+                    ? jsx('span', {
+                        className: 'hermes-bot-time-pill shrink-0 text-[0.6875rem] text-(--ui-text-quaternary)',
+                        children: relativeTime(last.last_active * 1000)
+                      })
+                    : null
+                ]
+              })
             ]
           }),
           jsx('div', {
-            className: 'truncate text-xs text-(--ui-text-tertiary)',
+            className: 'hermes-bot-preview truncate text-xs text-(--ui-text-tertiary)',
             children: last?.preview || bot.description || 'No conversations yet — say hi'
           })
         ]
