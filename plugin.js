@@ -1500,6 +1500,16 @@ function BotRow({ bot, onEdit }) {
   const botMood = isActive && gatewayState === 'busy' ? 'work' : 'idle'
   const unread = Boolean(useValue($botUnread)[bot.name])
 
+  const isCronSessionId = value => typeof value === 'string' && value.startsWith('cron_')
+  const pickReusableSessionId = rows => {
+    if (!Array.isArray(rows) || !rows.length) {
+      return null
+    }
+
+    const reusable = rows.find(row => row?.id && !isCronSessionId(String(row.id)))
+    return reusable?.id || null
+  }
+
   const open = async () => {
     haptic('tap')
     $selectedBot.set(bot.name)
@@ -1511,23 +1521,26 @@ function BotRow({ bot, onEdit }) {
     }
 
     let id = meta?.chat
+    let rows = []
 
-    if (id) {
-      // Recovery: compaction rewrites lineage ids. If the pin no longer
-      // resolves, follow the lineage to the newest session that CONTINUES
-      // this chat; if the whole lineage is gone, mint a fresh canonical.
-      try {
-        const res = await host.request('session.list', { profile: bot.name, limit: 100 })
-        const rows = res?.sessions ?? []
+    try {
+      const res = await host.request('session.list', { profile: bot.name, limit: 100 })
+      rows = res?.sessions ?? []
+    } catch {
+      rows = []
+    }
 
-        if (rows.length && !rows.some(s => s.id === id)) {
-          id = rows[0].id
-          saveBotMeta(bot.name, { chat: id })
-        }
-      } catch {
-        // Gateway hiccup — try the pin as-is.
+    const reusableId = pickReusableSessionId(rows)
+
+    if (!id || isCronSessionId(String(id)) || (rows.length && !rows.some(s => s.id === id))) {
+      id = reusableId
+
+      if (id && id !== meta?.chat) {
+        saveBotMeta(bot.name, { chat: id })
       }
-    } else {
+    }
+
+    if (!id) {
       try {
         id = await createCanonicalChat(bot.name)
 
